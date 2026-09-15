@@ -1,3 +1,5 @@
-export default function DashboardAdminPage() {
-  return <div>DashboardAdminPage</div>;
+import { AdminDashboard } from "@/components/fixitnow/admin-pages";
+
+export default function AdminPage() {
+  return <AdminDashboard />;
 }

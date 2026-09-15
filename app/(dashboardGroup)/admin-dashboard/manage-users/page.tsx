@@ -1,3 +1,5 @@
-export default function AdminManageUsersPage() {
-  return <div>AdminManageUsersPage</div>;
+import { AdminUsers } from "@/components/fixitnow/admin-pages";
+
+export default function AdminUsersPage() {
+  return <AdminUsers />;
 }

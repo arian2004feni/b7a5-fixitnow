@@ -1,3 +1,5 @@
-export default function AdminManageBookingsPage() {
-  return <div>AdminManageBookingsPage</div>;
+import { AdminBookings } from "@/components/fixitnow/admin-pages";
+
+export default function AdminBookingsPage() {
+  return <AdminBookings />;
 }
