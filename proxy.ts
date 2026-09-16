@@ -5,6 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Role } from "./types/user";
 
 const AUTH_ROUTES = ["/login", "/register"];
+const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
 
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
@@ -27,12 +28,26 @@ export async function proxy(request: NextRequest) {
     if (userRole === Role.CUSTOMER) {
       return NextResponse.redirect(new URL("/customer-dashboard", request.url));
     } else if (userRole === Role.TECHNICIAN) {
-      return NextResponse.redirect(new URL("/technician-dashboard", request.url));
+      return NextResponse.redirect(
+        new URL("/technician-dashboard", request.url),
+      );
     } else if (userRole === Role.ADMIN) {
       return NextResponse.redirect(new URL("/admin-dashboard", request.url));
     } else {
       return NextResponse.redirect(new URL("/", request.url));
     }
+  }
+
+  const isPublicRoute = PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
+
+  const isAuthRoute = AUTH_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
+
+  if (!accessToken && !isPublicRoute && !isAuthRoute) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // return NextResponse.redirect(new URL("/", request.url));
