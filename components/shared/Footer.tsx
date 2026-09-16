@@ -44,7 +44,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-slate-100">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-xs text-slate-400 sm:flex-row sm:justify-between lg:px-8">
-          <span>© {(new Date).getFullYear()} FixItNow. All rights reserved.</span>
+          <span>© 2026 FixItNow. All rights reserved.</span>
           <span>Privacy · Terms · Accessibility</span>
         </div>
       </div>
