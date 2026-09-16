@@ -1,6 +1,6 @@
 "use server";
 
-import { LoginResponse } from "@/lib/types";
+import { LoginResponse } from "@/types/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
