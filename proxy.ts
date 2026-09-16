@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { JwtPayload } from "jsonwebtoken";
 import { Role } from "./types/user";
 import { jwtUtils } from "./utils/jwt";
-import { isAccessTokenExist } from "./services/refreshToken";
+import { getNewAccessToken } from "./services/refreshToken";
+import { cookies } from "next/headers";
 
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
@@ -11,24 +12,46 @@ const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  
+  let accessToken = request.cookies.get("accessToken")?.value || null;
+  const refreshToken = request.cookies.get("refreshToken")?.value || null;
 
-  const accessToken = await isAccessTokenExist();
-
-  // check your accessToken
-  const decodedToken = accessToken
-    ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET!)
+  const decodedAccessToken = accessToken
+    ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
     : null;
+
+  const decodedRefreshToken = refreshToken
+    ? jwtUtils.verifyToken(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET as string,
+      )
+    : null;
+
+  if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
+    const result = await getNewAccessToken();
+
+    if (result.success) {
+      const newAccessToken = result.data.accessToken;
+      NextResponse.next().cookies.set("accessToken", newAccessToken, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24,
+        sameSite: "lax",
+      });
+
+      accessToken = newAccessToken;
+    }
+  }
 
   // set user role
 
   let userRole = null;
-  if (decodedToken?.success && decodedToken.data) {
-    userRole = (decodedToken.data as JwtPayload).role;
+  if (decodedAccessToken?.success && decodedAccessToken.data) {
+    userRole = (decodedAccessToken.data as JwtPayload).role;
   }
 
   // protecting auth routes and role based redirect
 
-  if (decodedToken?.success && AUTH_ROUTES.includes(pathname)) {
+  if (decodedAccessToken?.success && AUTH_ROUTES.includes(pathname)) {
     if (userRole === Role.CUSTOMER) {
       return NextResponse.redirect(new URL("/customer-dashboard", request.url));
     } else if (userRole === Role.TECHNICIAN) {
@@ -50,7 +73,7 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
-  if (!decodedToken?.success && !isPublicRoute && !isAuthRoute) {
+  if (!decodedAccessToken?.success && !isPublicRoute && !isAuthRoute) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
