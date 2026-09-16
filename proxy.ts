@@ -1,9 +1,9 @@
-// import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import { Role } from "./types/user";
 import { jwtUtils } from "./utils/jwt";
+import { isAccessTokenExist } from "./services/refreshToken";
 
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
@@ -12,26 +12,23 @@ const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // const cookieStore = await cookies();
-  // const accessToken = cookieStore.get("accessToken")?.value;
-  const accessToken = request.cookies.get("accessToken")?.value;
+  const accessToken = await isAccessTokenExist();
 
+  // check your accessToken
   const decodedToken = accessToken
     ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET!)
     : null;
 
+  // set user role
+
   let userRole = null;
-
-  if (!decodedToken?.success) {
-    request.cookies.delete("accessToken");
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (decodedToken.success && decodedToken.data) {
+  if (decodedToken?.success && decodedToken.data) {
     userRole = (decodedToken.data as JwtPayload).role;
   }
 
-  if (accessToken && AUTH_ROUTES.includes(pathname)) {
+  // protecting auth routes and role based redirect
+
+  if (decodedToken?.success && AUTH_ROUTES.includes(pathname)) {
     if (userRole === Role.CUSTOMER) {
       return NextResponse.redirect(new URL("/customer-dashboard", request.url));
     } else if (userRole === Role.TECHNICIAN) {
@@ -53,7 +50,7 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
-  if (!accessToken && !isPublicRoute && !isAuthRoute) {
+  if (!decodedToken?.success && !isPublicRoute && !isAuthRoute) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -79,5 +76,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|favicon.ico|_next/image|.*\\.png$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
