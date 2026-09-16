@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  LogOutIcon,
-  Menu,
-  SettingsIcon,
-  UserIcon,
-  X,
-} from "lucide-react";
+import { LogOutIcon, Menu, SettingsIcon, UserIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -24,9 +18,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Logo from "./Logo";
 import { toast } from "sonner";
+import logout from "@/services/logout";
+import { useRouter } from "next/navigation";
 
 export default function Navbar({ user }: { user: ApiResponse<UserResponse> }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const menuItems = [
     {
@@ -50,7 +47,9 @@ export default function Navbar({ user }: { user: ApiResponse<UserResponse> }) {
 
   const handleUserMenuAction = async (action: string) => {
     if (action === "logout") {
-      toast.success("succesfully triggred");
+      await logout();
+      toast.success("succesfully logged out");
+      router.push("/login");
     }
   };
 
