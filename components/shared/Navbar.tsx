@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Menu, Wrench, X } from "lucide-react";
 import Link from "next/link";
@@ -44,12 +44,16 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="ghost" className="text-slate-600">
-            <Link href="/login">Sign in</Link>
-          </Button>
-          <Button className="rounded-lg bg-blue-600 hover:bg-blue-700">
-            <Link href={"/register"}>Become a Technician</Link>
-          </Button>
+          <Link href="/login">
+            <Button variant="ghost" className="text-slate-600">
+              Sign in
+            </Button>
+          </Link>
+          <Link href={"/register"}>
+            <Button className="rounded-lg bg-blue-600 hover:bg-blue-700">
+              Become a Technician
+            </Button>
+          </Link>
         </div>
         <button
           aria-label="Open menu"
