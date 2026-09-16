@@ -1,3 +1,5 @@
+"use server"
+
 import { jwtUtils } from "@/utils/jwt";
 import { cookies } from "next/headers";
 
