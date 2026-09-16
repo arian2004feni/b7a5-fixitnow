@@ -1,6 +1,11 @@
 "use server";
 
-export const loginAction = async (formData: FormData) => {
+import { LoginResponse } from "@/lib/types";
+
+export const loginAction = async (
+  prevState: LoginResponse,
+  formData: FormData,
+) => {
   const email = formData.get("email");
   const password = formData.get("password");
 

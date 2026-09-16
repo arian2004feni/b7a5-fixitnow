@@ -15,13 +15,22 @@ import {
 } from "@/components/ui/input-group";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { loginAction } from "../_action/authAction";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [show, setShow] = useState(false);
+  const [state, action, isPending] = useActionState(loginAction, false);
+
+  useEffect(() => {
+    if (!state) return;
+    if (!state.success) toast.error(state.message || "login error");
+    if (state.success) toast.success(state.message || "login succeeded");
+  }, [state]);
+
   return (
-    <form action={loginAction}>
+    <form action={action}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="email">Email address</FieldLabel>
@@ -58,8 +67,12 @@ export default function LoginForm() {
             </InputGroupAddon>
           </InputGroup>
         </Field>
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-          Sign in
+        <Button
+          disabled={isPending}
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700"
+        >
+          {isPending ? "Submitting..." : "Sign in"}
         </Button>
         <FieldDescription className="text-center">
           New to FixItNow?{" "}
