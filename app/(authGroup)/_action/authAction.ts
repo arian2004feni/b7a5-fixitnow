@@ -2,6 +2,7 @@
 
 import { LoginResponse } from "@/lib/types";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const loginAction = async (
   prevState: LoginResponse,
@@ -31,6 +32,8 @@ export const loginAction = async (
       maxAge: 60 * 60 * 24 * 7,
       sameSite: "lax",
     });
+
+    redirect("/customer-dashboard");
   }
 
   return result;

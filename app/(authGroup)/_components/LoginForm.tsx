@@ -26,7 +26,7 @@ export default function LoginForm() {
   useEffect(() => {
     if (!state) return;
     if (!state.success) toast.error(state.message || "login error");
-    if (state.success) toast.success(state.message || "login succeeded");
+    // if (state.success) toast.success(state.message || "login succeeded");
   }, [state]);
 
   return (
