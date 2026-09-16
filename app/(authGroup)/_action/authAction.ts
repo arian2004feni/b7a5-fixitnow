@@ -1,6 +1,7 @@
 "use server";
 
 import { LoginResponse } from "@/lib/types";
+import { cookies } from "next/headers";
 
 export const loginAction = async (
   prevState: LoginResponse,
@@ -17,6 +18,20 @@ export const loginAction = async (
 
   const result = await res.json();
   console.log("result", result);
+
+  if (result.success) {
+    const cookieStore = await cookies();
+    cookieStore.set("accessToken", result.data.accessToken, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24,
+      sameSite: "lax",
+    });
+    cookieStore.set("refreshToken", result.data.refreshToken, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: "lax",
+    });
+  }
 
   return result;
 };
