@@ -3,6 +3,8 @@
 import { LoginResponse } from "@/types/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { Role } from "@/types/user";
 
 export const loginAction = async (
   prevState: LoginResponse,
@@ -33,7 +35,15 @@ export const loginAction = async (
       sameSite: "lax",
     });
 
-    redirect("/customer-dashboard");
+    const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+
+    if (decodedToken.role === Role.CUSTOMER) {
+      redirect("/customer-dashboard");
+    } else if (decodedToken.role === Role.TECHNICIAN) {
+      redirect("/technician-dashboard");
+    } else if (decodedToken.role === Role.ADMIN) {
+      redirect("/admin-dashboard");
+    } else redirect("/");
   }
 
   return result;
