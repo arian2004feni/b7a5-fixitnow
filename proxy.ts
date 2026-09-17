@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { JwtPayload } from "jsonwebtoken";
-import { Role } from "./types/user";
 import { jwtUtils } from "./utils/jwt";
 import { getNewAccessToken } from "./services/refreshToken";
 import { cookies } from "next/headers";
+import { Role } from "./types/enums";
+
 
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
@@ -12,9 +13,10 @@ const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  
-  let accessToken = request.cookies.get("accessToken")?.value || null;
-  const refreshToken = request.cookies.get("refreshToken")?.value || null;
+  const cookieStore = await cookies();
+
+  let accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
 
   const decodedAccessToken = accessToken
     ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
@@ -32,13 +34,20 @@ export async function proxy(request: NextRequest) {
 
     if (result.success) {
       const newAccessToken = result.data.accessToken;
-      NextResponse.next().cookies.set("accessToken", newAccessToken, {
+      cookieStore.set("accessToken", newAccessToken, {
         httpOnly: true,
         maxAge: 60 * 60 * 24,
         sameSite: "lax",
       });
 
       accessToken = newAccessToken;
+
+      // decodedAccessToken = newAccessToken
+      //   ? jwtUtils.verifyToken(
+      //       newAccessToken,
+      //       process.env.JWT_ACCESS_SECRET as string,
+      //     )
+      //   : null;
     }
   }
 
