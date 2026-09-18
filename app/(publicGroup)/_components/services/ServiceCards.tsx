@@ -24,8 +24,8 @@ export function ServiceCards({ service }: { service: Service }) {
     avgRating.count = avgRating.count + 1;
   });
   return (
-    <Card className="relative mx-auto w-full max-w-sm pt-0">
-      <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+    <Card className="relative mx-auto w-full  pt-0">
+      {/* <div className="absolute inset-0 z-30 aspect-video bg-black/35" /> */}
       <Image
         width={300}
         height={200}
@@ -52,25 +52,25 @@ export function ServiceCards({ service }: { service: Service }) {
         <CardTitle title={service.name} className="line-clamp-1">
           {service.name}
         </CardTitle>
-        <CardDescription className="pb-2">{service.description}</CardDescription>
+        <CardDescription className="line-clamp-2 mb-2">
+          By {service.technician?.user?.name}
+        </CardDescription>
       </CardHeader>
-      <CardFooter className="justify-between">
+      <CardFooter className="justify-between mt-auto">
         <div>
-            <span className="text-xs text-slate-400">Starting at</span>
-            <p className="font-bold text-slate-900">
-              ${service.price}
-              <span className="text-xs font-normal text-slate-400">
-                {" "}
-                / visit
-              </span>
-            </p>
-          </div>
-          <Link
-            href="/technicians/michael-rodriguez"
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-          >
-            Technician <ArrowRight className="ml-1 inline size-3.5" />
-          </Link>
+          <span className="text-xs text-slate-400">Starting at</span>
+          <p className="font-bold text-slate-900">
+            ${service.price}
+            <span className="text-xs font-normal text-slate-400"> / visit</span>
+          </p>
+        </div>
+        <Link
+          href="/technicians/michael-rodriguez"
+          className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center justify-end"
+        >
+          <span>View Technician</span>
+          <ArrowRight className="ml-1 inline size-3.5" />
+        </Link>
       </CardFooter>
     </Card>
   );

@@ -3,6 +3,7 @@ export interface ApiResponse<T> {
   statusCode: number;
   message: string;
   data: T;
+  meta?: PaginationMeta
 }
 
 export interface ApiErrorResponse {

@@ -5,6 +5,7 @@ export interface Service {
   id: string;
   name: string;
   thumbnail?: string | null;
+  duration?: number | null;
   description?: string | null;
   price: number;
 

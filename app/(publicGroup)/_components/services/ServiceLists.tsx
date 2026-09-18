@@ -4,9 +4,10 @@ import { ServiceCards } from "./ServiceCards";
 import { FilterControls } from "../FilterControls";
 import { MobileFilterButton } from "../MobileFilterButton";
 import { Service } from "@/types/services";
+import { ApiResponse } from "@/types/api";
 
 export default async function ServiceLists() {
-  const result = await getServices()
+const result: ApiResponse<Service[]> = await getServices()
   return (
     <div className="mx-auto flex max-w-7xl gap-8 px-5 py-10 lg:px-8">
       <FilterControls />
@@ -14,7 +15,7 @@ export default async function ServiceLists() {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-slate-500">
             <strong className="text-slate-800">
-              {result.data.length} services
+              {result.meta?.total} services
             </strong>{" "}
             available near you
           </p>

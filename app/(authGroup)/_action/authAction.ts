@@ -4,7 +4,7 @@ import { LoginResponse } from "@/types/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { Role } from "@/types/user";
+import { Role } from "@/types/enums";
 
 export const loginAction = async (
   prevState: LoginResponse,
