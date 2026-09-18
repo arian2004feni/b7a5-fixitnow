@@ -7,6 +7,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Role } from "@/types/enums";
 
 export const loginAction = async (
+  redirectTo: string,
   prevState: LoginResponse,
   formData: FormData,
 ) => {
@@ -37,7 +38,14 @@ export const loginAction = async (
 
     const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
 
-    if (decodedToken.role === Role.CUSTOMER) {
+    if (
+      redirectTo &&
+      typeof redirectTo === "string" &&
+      redirectTo.startsWith("/") &&
+      !redirectTo.startsWith("//")
+    ) {
+      redirect(redirectTo);
+    } else if (decodedToken.role === Role.CUSTOMER) {
       redirect("/customer-dashboard");
     } else if (decodedToken.role === Role.TECHNICIAN) {
       redirect("/technician-dashboard");

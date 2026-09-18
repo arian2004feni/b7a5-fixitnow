@@ -6,7 +6,6 @@ import { getNewAccessToken } from "./services/refreshToken";
 import { cookies } from "next/headers";
 import { Role } from "./types/enums";
 
-
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/", "/services", "/technicians"];
 
@@ -83,7 +82,9 @@ export async function proxy(request: NextRequest) {
   );
 
   if (!decodedAccessToken?.success && !isPublicRoute && !isAuthRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirectTo", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   if (

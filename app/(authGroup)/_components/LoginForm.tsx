@@ -18,10 +18,16 @@ import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { loginAction } from "../_action/authAction";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const [show, setShow] = useState(false);
-  const [state, action, isPending] = useActionState(loginAction, false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") ?? "";
+  const [state, action, isPending] = useActionState(
+    loginAction.bind(null, redirectTo),
+    false,
+  );
 
   useEffect(() => {
     if (!state) return;
