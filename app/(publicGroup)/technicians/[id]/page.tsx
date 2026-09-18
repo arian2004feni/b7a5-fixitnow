@@ -10,111 +10,58 @@ import {
 } from "lucide-react";
 import Rating from "../../_components/Rating";
 import { BookingCard } from "../../_components/BookingCard";
-const profileTechnicians = [
-  {
-    slug: "michael-rodriguez",
-    name: "Michael Rodriguez",
-    profession: "Licensed Plumber",
-    location: "Austin, TX",
-    rating: 4.9,
-    reviews: 128,
-    years: 12,
-    jobs: 348,
-    price: 85,
-    avatar: "https://i.pravatar.cc/160?img=12",
-    color: "bg-blue-100",
-  },
-  {
-    slug: "sarah-johnson",
-    name: "Sarah Johnson",
-    profession: "Professional Cleaner",
-    location: "Round Rock, TX",
-    rating: 5.0,
-    reviews: 84,
-    years: 8,
-    jobs: 214,
-    price: 60,
-    avatar: "https://i.pravatar.cc/160?img=47",
-    color: "bg-amber-100",
-  },
-  {
-    slug: "david-chen",
-    name: "David Chen",
-    profession: "Master Electrician",
-    location: "Austin, TX",
-    rating: 4.8,
-    reviews: 96,
-    years: 15,
-    jobs: 402,
-    price: 75,
-    avatar: "https://i.pravatar.cc/160?img=68",
-    color: "bg-emerald-100",
-  },
-  {
-    slug: "james-wilson",
-    name: "James Wilson",
-    profession: "Painting Specialist",
-    location: "Pflugerville, TX",
-    rating: 4.9,
-    reviews: 72,
-    years: 10,
-    jobs: 187,
-    price: 120,
-    avatar: "https://i.pravatar.cc/160?img=11",
-    color: "bg-violet-100",
-  },
-];
+import { getTechnicians } from "../../_actions/publicActions";
+import { TechnicianProfile as Technician } from "@/types/user";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ApiResponse } from "@/types/api";
 const profileServices = [
   { id: "plumbing", title: "Emergency Plumbing", price: 85 },
   { id: "pipes", title: "Pipe installation", price: 120 },
   { id: "water", title: "Water heater repair", price: 95 },
   { id: "drain", title: "Drain cleaning", price: 75 },
 ];
-export function generateStaticParams() {
-  return profileTechnicians.map((t) => ({ slug: t.slug }));
-}
 export default async function TechnicianProfile({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const tech = profileTechnicians.find((t) => t.slug === slug);
+  const { id } = await params;
+  const profileTechnicians: ApiResponse<Technician[]> = await getTechnicians();
+  const tech = profileTechnicians.data.find((t) => t.id === id);
   if (!tech) notFound();
   return (
     <>
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
           <div className="flex flex-col gap-7 sm:flex-row sm:items-center">
-            <div
-              className={`grid size-28 shrink-0 place-items-center overflow-hidden rounded-3xl ${tech.color}`}
-            >
-              <img
-                src={tech.avatar}
-                alt={tech.name}
-                className="size-full object-cover"
-              />
+            <div className="grid size-28 shrink-0 place-items-center overflow-hidden rounded-3xl">
+              <Avatar className="size-28">
+                <AvatarImage src={tech.profilePhoto as string} />
+                <AvatarFallback>
+                  {tech.user?.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-3xl font-bold text-slate-950">
-                  {tech.name}
+                  {tech.user?.name}
                 </h1>
                 <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
                   <BadgeCheck className="size-3.5 fill-blue-600 text-white" />
                   Verified
                 </span>
               </div>
-              <p className="mt-2 text-lg text-slate-500">{tech.profession}</p>
+              <p className="mt-2 text-lg text-slate-500">{tech.bio}</p>
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-                <Rating value={tech.rating} reviews={tech.reviews} />
+                <Rating value={4.4} reviews={44} />
                 <span className="flex items-center gap-1.5">
                   <MapPin className="size-4" />
                   {tech.location}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <BriefcaseBusiness className="size-4" />
-                  {tech.years} years experience
+                  {tech.experienceYears} years experience
                 </span>
               </div>
             </div>
@@ -147,23 +94,21 @@ export default async function TechnicianProfile({
           </div>
           <section className="py-8">
             <h2 className="text-xl font-bold">
-              About {tech.name.split(" ")[0]}
+              About {tech.user?.name.split(" ")[0]}
             </h2>
             <p className="mt-4 max-w-2xl leading-7 text-slate-600">
-              With over {tech.years} years of experience, I take pride in
-              delivering dependable, high-quality work for every home. From
+              With over {tech.experienceYears} years of experience, I take pride
+              in delivering dependable, high-quality work for every home. From
               small repairs to larger projects, my goal is to leave every
               customer feeling confident and cared for.
             </p>
             <div className="mt-7 grid gap-4 sm:grid-cols-3">
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-2xl font-bold text-slate-900">{tech.jobs}</p>
+                <p className="text-2xl font-bold text-slate-900">{33}</p>
                 <p className="mt-1 text-sm text-slate-500">Jobs completed</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-2xl font-bold text-slate-900">
-                  {tech.rating}
-                </p>
+                <p className="text-2xl font-bold text-slate-900">{4.4}</p>
                 <p className="mt-1 text-sm text-slate-500">Average rating</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
