@@ -8,7 +8,7 @@ export default function ServicesSeachBar() {
       <InputGroupAddon>
         <Search />
       </InputGroupAddon>
-      <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+      {/* <InputGroupAddon align="inline-end">12 results</InputGroupAddon> */}
     </InputGroup>
   );
 }

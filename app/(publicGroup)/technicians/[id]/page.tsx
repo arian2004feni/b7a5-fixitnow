@@ -57,7 +57,7 @@ export default async function TechnicianProfile({
                 <Rating value={4.4} reviews={44} />
                 <span className="flex items-center gap-1.5">
                   <MapPin className="size-4" />
-                  {tech.location}
+                  {tech.location ?? "N/A"}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <BriefcaseBusiness className="size-4" />

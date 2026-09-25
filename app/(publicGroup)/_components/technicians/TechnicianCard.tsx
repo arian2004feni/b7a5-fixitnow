@@ -54,7 +54,7 @@ export default async function TechnicianCard({
           <strong className="text-slate-800">{33}</strong> jobs done
         </span>
         <span>
-          <strong className="text-slate-800">{98}</strong>%
+          <strong className="text-slate-800">{98}</strong>% Imp.
         </span>
       </div>
       <div className="px-4">
