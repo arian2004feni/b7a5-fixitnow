@@ -20,6 +20,7 @@ import Logo from "./Logo";
 import { toast } from "sonner";
 import logout from "@/services/logout";
 import { useRouter } from "next/navigation";
+import { Role } from "@/types/enums";
 
 export default function Navbar({ user }: { user: ApiResponse<UserResponse> }) {
   const [open, setOpen] = useState(false);
@@ -50,6 +51,16 @@ export default function Navbar({ user }: { user: ApiResponse<UserResponse> }) {
       await logout();
       toast.success("succesfully logged out");
       router.push("/login");
+    }
+    if (action === "profile") {
+      if (user.data.role === Role.CUSTOMER) {
+        router.push("/customer-dashboard");
+      } else if (user.data.role === Role.TECHNICIAN) {
+        router.push("/technician-dashboard");
+      } else if (user.data.role === Role.ADMIN) {
+        router.push("/admin-dashboard");
+      }
+      return;
     }
   };
 
