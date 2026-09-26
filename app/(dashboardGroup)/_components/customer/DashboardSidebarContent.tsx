@@ -49,11 +49,11 @@ export default function DashboardSidebarContent({
                 JD
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1">
-              <p className="truncate text-sm font-semibold text-slate-900">
+            <div className="flex-1 w-32">
+              <p className="truncate text-sm font-semibold text-slate-900 line-clamp-1">
                 {user.data.name ?? "N/A"}
               </p>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs text-slate-500 line-clamp-1">
                 {user.data.email ?? "N/A"}
               </p>
             </div>
