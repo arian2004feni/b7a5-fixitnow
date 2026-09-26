@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import {
   ArrowRight,
   CalendarDays,
   CheckCircle2,
   Clock3,
+  FolderCode,
   MapPin,
   Search,
   ShieldCheck,
@@ -14,36 +13,75 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { StatCard } from "@/components/fixitnow/customer-shell";
-import { services } from "@/components/fixitnow/data";
+import { getMe } from "@/services/getMe";
+import StatCard from "../_components/customer/StatCard";
+import { ApiResponse } from "@/types/api";
+import { User } from "@/types/user";
+import { BookingStatus } from "@/types/enums";
+import { getServices } from "@/app/(publicGroup)/_actions/publicActions";
+import { Service } from "@/types/services";
+import Image from "next/image";
 
-const bookings = [
-  {
-    service: "Deep home cleaning",
-    tech: "Ava Thompson",
-    date: "May 24, 2024",
-    status: "Confirmed",
-    price: "$120",
-  },
-  {
-    service: "Faucet repair",
-    tech: "Michael Rodriguez",
-    date: "May 12, 2024",
-    status: "Completed",
-    price: "$85",
-  },
-  {
-    service: "AC maintenance",
-    tech: "Daniel Kim",
-    date: "Apr 28, 2024",
-    status: "Completed",
-    price: "$95",
-  },
-];
+export default async function CustomerDashboard() {
+  const user: ApiResponse<User> = await getMe();
 
-export default function CustomerDashboard() {
+  const services: ApiResponse<Service[]> = await getServices();
+
+  const userBookings = user.data.customerProfile?.customerBookings;
+
+  const totalBooking = userBookings?.length ?? 0;
+  let totalBookingThisMonth = 0;
+  userBookings?.map((item) => {
+    if (new Date(item.createdAt).getMonth() === new Date().getMonth()) {
+      totalBookingThisMonth = totalBookingThisMonth + 1;
+    }
+  });
+
+  let totalCompletedServices = 0;
+  userBookings?.map((item) => {
+    if (item.status === BookingStatus.COMPLETED) {
+      totalCompletedServices++;
+    }
+  });
+
+  let satisfactionCount = (totalCompletedServices / totalBooking) * 100;
+  if (totalCompletedServices === 0) satisfactionCount = 0;
+
+  const stats = [
+    {
+      label: "Total bookings",
+      value: totalBooking,
+      detail: `${totalBookingThisMonth <= 0 ? "No Booking" : totalBookingThisMonth} this month`,
+      icon: CalendarDays,
+    },
+    {
+      label: "Completed services",
+      value: totalCompletedServices,
+      detail: `${satisfactionCount <= 0 ? "No" : satisfactionCount + "%"} satisfaction`,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Saved technicians",
+      value: 0,
+      detail: "Across 0 categories",
+      icon: Star,
+    },
+    {
+      label: "Member since",
+      value: new Date(user.data.createdAt).getFullYear(),
+      detail: "Trusted customer",
+      icon: ShieldCheck,
+    },
+  ];
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -52,7 +90,7 @@ export default function CustomerDashboard() {
             Your home, taken care of
           </p>
           <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
-            Good morning, Jordan
+            Good morning, {user.data.name ?? "N/A"}
           </h2>
           <p className="mt-2 text-slate-500">
             Here&apos;s what&apos;s happening with your FixItNow account.
@@ -66,84 +104,100 @@ export default function CustomerDashboard() {
         </Button>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Total bookings"
-          value="12"
-          detail="3 this month"
-          icon={CalendarDays}
-        />
-        <StatCard
-          label="Completed services"
-          value="9"
-          detail="100% satisfaction"
-          icon={CheckCircle2}
-        />
-        <StatCard
-          label="Saved technicians"
-          value="6"
-          detail="Across 4 categories"
-          icon={Star}
-        />
-        <StatCard
-          label="Member since"
-          value="2023"
-          detail="Trusted customer"
-          icon={ShieldCheck}
-        />
+        {stats.map((stat) => (
+          <StatCard
+            key={stat.label}
+            label={stat.label}
+            value={stat.value}
+            detail={stat.detail}
+            icon={stat.icon}
+          />
+        ))}
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-        <Card className="border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Upcoming booking</CardTitle>
-              <p className="mt-1 text-sm text-slate-500">
-                Your next service appointment
-              </p>
-            </div>
-            <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-              Confirmed
-            </Badge>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-xl bg-slate-50 p-5">
-              <div className="flex flex-col justify-between gap-5 sm:flex-row">
-                <div className="flex gap-4">
-                  <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-700">
-                    <Wrench className="size-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-950">
-                      Deep home cleaning
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-500">
-                      with Ava Thompson
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-500">
-                      <span className="flex items-center gap-1.5">
-                        <CalendarDays className="size-3.5" />
-                        Friday, May 24
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock3 className="size-3.5" />
-                        10:00 AM
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <MapPin className="size-3.5" />
-                        Austin, TX
-                      </span>
+        {userBookings?.length ? (
+          <Card className="border-slate-200">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Upcoming booking</CardTitle>
+                <p className="mt-1 text-sm text-slate-500">
+                  Your next service appointment
+                </p>
+              </div>
+              <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                {userBookings?.[0]?.status}
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-xl bg-slate-50 p-5">
+                <div className="flex flex-col justify-between gap-5 sm:flex-row">
+                  <div className="flex gap-4">
+                    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-700">
+                      <Wrench className="size-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-slate-950">
+                        {userBookings?.[0].service?.name}
+                      </h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                        With {userBookings?.[0].technicianProfile?.user?.name}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-500">
+                        <span className="flex items-center gap-1.5">
+                          <CalendarDays className="size-3.5" />
+                          {new Date(
+                            String(userBookings?.[0].createdAt),
+                          ).toLocaleDateString()}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock3 className="size-3.5" />
+                          {new Date(
+                            String(userBookings?.[0].createdAt),
+                          ).toLocaleTimeString()}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <MapPin className="size-3.5" />
+                          N/A
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:justify-center">
-                  <span className="font-bold text-slate-950">$120</span>
-                  <Button variant="outline" size="sm">
-                    Manage booking
-                  </Button>
+                  <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:justify-center">
+                    <span className="font-bold text-slate-950">
+                      ${userBookings?.[0].service?.price}
+                    </span>
+                    <Button variant="outline" size="sm">
+                      Manage booking
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FolderCode />
+                </EmptyMedia>
+                <EmptyTitle>Not Booked Yet</EmptyTitle>
+                <EmptyDescription>
+                  You haven&apos;t made any bookings yet. Get started by getting
+                  your first service.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent className="flex-row justify-center gap-2">
+                <Button>
+                  <Link href={"/services"}>Find Services</Link>
+                </Button>
+                <Button variant={"outline"}>
+                  <Link href={"/technicians"}>Find Technician</Link>
+                </Button>
+              </EmptyContent>
+            </Empty>
+          </Card>
+        )}
         <Card className="border-slate-200">
           <CardHeader>
             <CardTitle>Quick actions</CardTitle>
@@ -207,25 +261,27 @@ export default function CustomerDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking) => (
+                {userBookings?.map((booking) => (
                   <tr
-                    key={booking.service}
+                    key={booking.id}
                     className="border-b border-slate-100 last:border-0"
                   >
                     <td className="py-4">
                       <p className="font-medium text-slate-800">
-                        {booking.service}
+                        {booking.service?.name}
                       </p>
                       <p className="mt-1 text-xs text-slate-500">
-                        {booking.tech}
+                        {booking.technicianProfile?.user?.name}
                       </p>
                     </td>
-                    <td className="py-4 text-slate-500">{booking.date}</td>
+                    <td className="py-4 text-slate-500">
+                      {new Date(String(booking.createdAt)).toDateString()}
+                    </td>
                     <td className="py-4">
                       <Badge
                         variant="secondary"
                         className={
-                          booking.status === "Confirmed"
+                          booking.status === BookingStatus.REQUESTED
                             ? "bg-blue-50 text-blue-700"
                             : ""
                         }
@@ -234,7 +290,7 @@ export default function CustomerDashboard() {
                       </Badge>
                     </td>
                     <td className="py-4 text-right font-semibold text-slate-800">
-                      {booking.price}
+                      $ {booking.service?.price}
                     </td>
                   </tr>
                 ))}
@@ -242,21 +298,22 @@ export default function CustomerDashboard() {
             </table>
           </div>
           <div className="flex flex-col gap-3 md:hidden">
-            {bookings.map((booking) => (
+            {userBookings?.map((booking) => (
               <div
-                key={booking.service}
+                key={booking.id}
                 className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 last:border-0"
               >
                 <div>
                   <p className="font-medium text-slate-800">
-                    {booking.service}
+                    {booking.service?.name}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
-                    {booking.date} · {booking.tech}
+                    {new Date(String(booking.createdAt)).toDateString()} ·{" "}
+                    {booking.technicianProfile?.user?.name}
                   </p>
                 </div>
                 <span className="font-semibold text-slate-800">
-                  {booking.price}
+                  $ {booking.service?.price}
                 </span>
               </div>
             ))}
@@ -281,25 +338,28 @@ export default function CustomerDashboard() {
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.slice(0, 3).map((service) => (
+          {services.data.slice(0, 3).map((service: Service) => (
             <Link
-              href="/services"
-              key={service.title}
+              href={`/services`}
+              key={service.id}
               className="group overflow-hidden rounded-xl border border-slate-200 bg-white"
             >
-              <div className="aspect-[2/1] overflow-hidden bg-slate-100">
-                <img
-                  src={service.image}
-                  alt={service.title}
+              <div className="aspect-2/1 overflow-hidden bg-slate-100">
+                <Image
+                  width={300}
+                  height={200}
+                  unoptimized
+                  src={service.thumbnail ?? "l"}
+                  alt={service.name}
                   className="size-full object-cover transition duration-300 group-hover:scale-105"
                 />
               </div>
               <div className="p-4">
                 <p className="text-xs font-semibold text-blue-600">
-                  {service.category}
+                  {service.category?.name}
                 </p>
                 <h3 className="mt-1 font-semibold text-slate-900">
-                  {service.title}
+                  {service.name}
                 </h3>
                 <p className="mt-2 text-sm text-slate-500">
                   From ${service.price} / visit
@@ -309,7 +369,6 @@ export default function CustomerDashboard() {
           ))}
         </div>
       </div>
-      <Separator />
     </div>
   );
 }

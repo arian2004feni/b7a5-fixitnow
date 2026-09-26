@@ -15,14 +15,17 @@ export default async function CustomerLayout({
   return (
     <SidebarProvider>
       <DashboardSidebarContent user={user} />
-      <div>
+      <div className="flex flex-col flex-1">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur lg:px-8">
           <div className="flex items-center gap-3">
             <SidebarTrigger />
             <Separator orientation="vertical" />
             <div>
               <p className="hidden text-xs font-medium text-slate-400 sm:block">
-                <span className="capitalize">{user.data.role.toLowerCase()}</span> account
+                <span className="capitalize">
+                  {user.data.role.toLowerCase()}
+                </span>{" "}
+                account
               </p>
               <h1 className="text-sm font-semibold text-slate-900 sm:text-base">
                 Welcome back, {user.data.name ?? "N/A"}
@@ -35,7 +38,7 @@ export default async function CustomerLayout({
             </AvatarFallback>
           </Avatar>
         </header>
-        <main className="mx-auto max-w-7xl p-5 lg:p-8">{children}</main>
+        <main className="max-w-7xl p-5 lg:p-8">{children}</main>
       </div>
     </SidebarProvider>
   );

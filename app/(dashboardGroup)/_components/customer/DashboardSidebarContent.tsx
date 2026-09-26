@@ -1,17 +1,32 @@
-import { LogOut } from "lucide-react";
+"use client";
+
+import { LogOut, Trash2Icon } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Logo from "@/components/shared/Logo";
 import { ApiResponse } from "@/types/api";
 import { User as UserResponse } from "@/types/user";
 import MainNavLinks from "../MainNavLinks";
+import logout from "@/services/logout";
+import { redirect } from "next/navigation";
 
 export default function DashboardSidebarContent({
   user,
@@ -34,7 +49,7 @@ export default function DashboardSidebarContent({
                 JD
               </AvatarFallback>
             </Avatar>
-            <div className="">
+            <div className="flex-1">
               <p className="truncate text-sm font-semibold text-slate-900">
                 {user.data.name ?? "N/A"}
               </p>
@@ -42,13 +57,36 @@ export default function DashboardSidebarContent({
                 {user.data.email ?? "N/A"}
               </p>
             </div>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarMenuItem className="flex gap-2">
-            <SidebarMenuButton>
-              <LogOut /> Logout
-            </SidebarMenuButton>
+            <AlertDialog>
+              <AlertDialogTrigger className="flex gap-2 text-slate-600 mt-2 text-sm">
+                <LogOut className="size-5" />
+              </AlertDialogTrigger>
+              <AlertDialogContent size="sm">
+                <AlertDialogHeader>
+                  <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                    <Trash2Icon />
+                  </AlertDialogMedia>
+                  <AlertDialogTitle>Sign Out?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are You Sure Want to Log Out?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel variant="outline">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await logout();
+                      redirect("/login");
+                    }}
+                    variant="destructive"
+                  >
+                    Yes, Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
