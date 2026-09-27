@@ -1,12 +1,12 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import DashboardSidebarContent from "../_components/customer/DashboardSidebarContent";
+import DashboardSidebarContent from "./_components/DashboardSidebarContent";
 import { Separator } from "@/components/ui/separator";
 import { getMe } from "@/services/getMe";
 import { ApiResponse } from "@/types/api";
 import { User as UserResponse } from "@/types/user";
 
-export default async function CustomerLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -33,8 +33,11 @@ export default async function CustomerLayout({
             </div>
           </div>
           <Avatar className="size-9">
-            <AvatarFallback className="bg-blue-100 text-blue-700">
-              {user.data.name.slice(0, 2).toUpperCase()}
+            <AvatarFallback className="bg-blue-100 text-blue-700 uppercase">
+              {user.data.name
+                .split(" ")
+                .map((j) => j.split("")[0])
+                .join("")}
             </AvatarFallback>
           </Avatar>
         </header>

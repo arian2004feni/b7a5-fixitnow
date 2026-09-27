@@ -10,45 +10,38 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { ApiResponse } from "@/types/api";
+import { Role } from "@/types/enums";
+import { ISidebarItem } from "@/types/sidebarItems";
+import { User } from "@/types/user";
 import {
-  CalendarDays,
-  CreditCard,
-  LayoutDashboard,
   MessageSquare,
-  // Star,
-  UserRound,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { sidebarNavItems } from "../_config/SidebarNavItems";
 
-const links = [
-  { href: "/customer-dashboard", label: "Overview", icon: LayoutDashboard },
-  {
-    href: "/customer-dashboard/bookings",
-    label: "My bookings",
-    icon: CalendarDays,
-  },
-  { href: "/customer-dashboard/payments", label: "Payments", icon: CreditCard },
-  // { href: "/customer-dashboard/reviews", label: "Reviews", icon: Star },
-  {
-    href: "/customer-dashboard/profile",
-    label: "Profile settings",
-    icon: UserRound,
-  },
-];
-
-export default function MainNavLinks() {
+export default function MainNavLinks({ user }: { user: ApiResponse<User> }) {
   const pathname = usePathname();
+  let navItems: ISidebarItem[] = [];
+
+  if (user.data.role === Role.CUSTOMER) {
+    navItems = sidebarNavItems.CUSTOMER;
+  } else if (user.data.role === Role.TECHNICIAN) {
+    navItems = sidebarNavItems.TECHNICIAN;
+  } else if (user.data.role === Role.ADMIN) {
+    navItems = sidebarNavItems.ADMIN;
+  }
 
   return (
     <SidebarContent>
       <SidebarGroup>
         <SidebarGroupLabel className="mt-4 mb-2 px-3 text-xs font-bold uppercase tracking-widest text-slate-400">
-          Customer menu
+          {user.data.role.toLowerCase()} menu
         </SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu className="gap-1">
-            {links.map((item) => (
+            {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href}>
                   <SidebarMenuButton

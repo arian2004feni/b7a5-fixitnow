@@ -1,32 +1,32 @@
 "use client";
 
-import { LogOut, Trash2Icon } from "lucide-react";
+import Logo from "@/components/shared/Logo";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
-  Sidebar,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
+    Sidebar,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import Logo from "@/components/shared/Logo";
+import logout from "@/services/logout";
 import { ApiResponse } from "@/types/api";
 import { User as UserResponse } from "@/types/user";
-import MainNavLinks from "../MainNavLinks";
-import logout from "@/services/logout";
+import { LogOut, Trash2Icon } from "lucide-react";
 import { redirect } from "next/navigation";
+import MainNavLinks from "./MainNavLinks";
 
 export default function DashboardSidebarContent({
   user,
@@ -39,14 +39,14 @@ export default function DashboardSidebarContent({
         <Logo className="px-2" />
       </SidebarHeader>
 
-      <MainNavLinks />
+      <MainNavLinks user={user}/>
 
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem className="flex gap-2">
             <Avatar className="size-9">
-              <AvatarFallback className="bg-blue-100 text-blue-700">
-                JD
+              <AvatarFallback className="bg-blue-100 text-blue-700 uppercase">
+                {user.data.name.split(" ").map(j => j.split("")[0]).join("")}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 w-32">
