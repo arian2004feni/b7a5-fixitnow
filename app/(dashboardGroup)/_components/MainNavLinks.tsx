@@ -15,7 +15,7 @@ import {
   CreditCard,
   LayoutDashboard,
   MessageSquare,
-  Star,
+  // Star,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -29,7 +29,7 @@ const links = [
     icon: CalendarDays,
   },
   { href: "/customer-dashboard/payments", label: "Payments", icon: CreditCard },
-  { href: "/customer-dashboard/reviews", label: "Reviews", icon: Star },
+  // { href: "/customer-dashboard/reviews", label: "Reviews", icon: Star },
   {
     href: "/customer-dashboard/profile",
     label: "Profile settings",

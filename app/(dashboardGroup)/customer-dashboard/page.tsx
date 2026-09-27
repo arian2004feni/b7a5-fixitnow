@@ -30,6 +30,7 @@ import { BookingStatus } from "@/types/enums";
 import { getServices } from "@/app/(publicGroup)/_actions/publicActions";
 import { Service } from "@/types/services";
 import Image from "next/image";
+import StatusBadge from "../_components/customer/StatusBadge";
 
 export default async function CustomerDashboard() {
   const user: ApiResponse<User> = await getMe();
@@ -66,7 +67,7 @@ export default async function CustomerDashboard() {
     {
       label: "Completed services",
       value: totalCompletedServices,
-      detail: `${satisfactionCount <= 0 ? "No" : satisfactionCount + "%"} satisfaction`,
+      detail: `${satisfactionCount <= 0 ? "No" : Math.round(satisfactionCount) + "%"} satisfaction`,
       icon: CheckCircle2,
     },
     {
@@ -249,72 +250,73 @@ export default async function CustomerDashboard() {
             View all <ArrowRight className="ml-1 inline size-4" />
           </Link>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
+              <thead className="border-y bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="pb-3 font-medium">Service</th>
-                  <th className="pb-3 font-medium">Date</th>
-                  <th className="pb-3 font-medium">Status</th>
-                  <th className="pb-3 text-right font-medium">Amount</th>
+                  <th className="px-6 py-3">Booking</th>
+                  <th className="px-6 py-3">Technician</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Amount</th>
                 </tr>
               </thead>
               <tbody>
-                {userBookings?.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="border-b border-slate-100 last:border-0"
-                  >
-                    <td className="py-4">
-                      <p className="font-medium text-slate-800">
-                        {booking.service?.name}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
+                {userBookings?.length ? (
+                  userBookings.map((booking) => (
+                    <tr key={booking.id} className="border-b last:border-0">
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-900">
+                          {booking.service?.name}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {booking.service?.category?.name}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600">
                         {booking.technicianProfile?.user?.name}
-                      </p>
-                    </td>
-                    <td className="py-4 text-slate-500">
-                      {new Date(String(booking.createdAt)).toDateString()}
-                    </td>
-                    <td className="py-4">
-                      <Badge
-                        variant="secondary"
-                        className={
-                          booking.status === BookingStatus.REQUESTED
-                            ? "bg-blue-50 text-blue-700"
-                            : ""
-                        }
-                      >
-                        {booking.status}
-                      </Badge>
-                    </td>
-                    <td className="py-4 text-right font-semibold text-slate-800">
-                      $ {booking.service?.price}
+                      </td>
+                      <td className="px-6 py-4 text-slate-600">
+                        {new Date(String(booking.createdAt)).toDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge status={booking.status} />
+                      </td>
+                      <td className="px-6 py-4 font-semibold">
+                        {booking.service?.price}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="p-4 text-center">
+                      No Booking Available
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col gap-3 md:hidden">
+          <div className="flex flex-col gap-3 p-4 md:hidden">
             {userBookings?.map((booking) => (
-              <div
-                key={booking.id}
-                className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 last:border-0"
-              >
-                <div>
-                  <p className="font-medium text-slate-800">
-                    {booking.service?.name}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {new Date(String(booking.createdAt)).toDateString()} ·{" "}
-                    {booking.technicianProfile?.user?.name}
-                  </p>
+              <div key={booking.id} className="rounded-xl border p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">{booking.service?.name}</p>
+                    <p className="text-xs text-slate-500">{booking.id}</p>
+                  </div>
+                  <StatusBadge status={booking.status} />
                 </div>
-                <span className="font-semibold text-slate-800">
-                  $ {booking.service?.price}
-                </span>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+                  <span>{booking.technicianProfile?.user?.name}</span>
+                  <span>
+                    {new Date(String(booking.createdAt)).toDateString()}
+                  </span>
+                  <span className="font-semibold text-slate-900">
+                    {booking.service?.price}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
