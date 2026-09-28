@@ -23,7 +23,9 @@ export interface CreateServiceRequest {
   name: string;
   description?: string;
   price: number;
-  categoryId: string;
+  category?: string;
+  thumbnail?: string;
+  duration?: number;
 }
 
 export interface UpdateServiceRequest {

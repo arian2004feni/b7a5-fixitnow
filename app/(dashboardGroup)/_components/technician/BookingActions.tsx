@@ -39,26 +39,9 @@ export function Actions({
           Complete job
         </Button>
       )}
-      {booking.status === BookingStatus.COMPLETED && (
-        <Button size="sm" variant="outline">
-          View
-        </Button>
-      )}
-      {booking.status === BookingStatus.DECLINED && (
-        <Button size="sm" variant="outline">
-          View
-        </Button>
-      )}
-      {booking.status === BookingStatus.CANCELLED && (
-        <Button size="sm" variant="outline">
-          View
-        </Button>
-      )}
-      {booking.status === BookingStatus.ACCEPTED && (
-        <Button size="sm" variant="outline">
-          View
-        </Button>
-      )}
+      <Button size="sm" variant="outline">
+        View
+      </Button>
     </div>
   );
 }
