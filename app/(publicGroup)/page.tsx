@@ -27,9 +27,15 @@ const categories = [
   { name: "Carpentry", icon: "⌂", tint: "bg-orange-50 text-orange-600" },
 ];
 
-export default async function PublicHomePage() {
-  const services: ApiResponse<Service[]> = await getServices();
-  const technicians: ApiResponse<TechnicianProfile[]> = await getTechnicians();
+export default async function PublicHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const query = await searchParams;
+  const services: ApiResponse<Service[]> = await getServices(query);
+  const technicians: ApiResponse<TechnicianProfile[]> =
+    await getTechnicians(query);
   return (
     <>
       <section className="relative overflow-hidden bg-slate-950">
@@ -178,10 +184,10 @@ export default async function PublicHomePage() {
           />
           <Suspense>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {technicians.data.slice(0,4).map((tech) => (
-              <TechnicianCard key={tech.id} tech={tech} />
-            ))}
-          </div>
+              {technicians.data.slice(0, 4).map((tech) => (
+                <TechnicianCard key={tech.id} tech={tech} />
+              ))}
+            </div>
           </Suspense>
         </div>
       </section>

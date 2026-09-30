@@ -2,7 +2,11 @@ import ServiceLists from "../_components/services/ServiceLists";
 import ServicesSeachBar from "../_components/services/ServicesSeachBar";
 import { Suspense } from "react";
 
-export default function PublicServicesPage() {
+export default function PublicServicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   return (
     <>
       <div className="border-b border-slate-200 bg-white">
@@ -21,7 +25,7 @@ export default function PublicServicesPage() {
         </div>
       </div>
       <Suspense fallback={<span>Loading...</span>}>
-        <ServiceLists />
+        <ServiceLists searchParams={searchParams}/>
       </Suspense>
     </>
   );

@@ -6,8 +6,14 @@ import { ChevronDown } from "lucide-react";
 import TechnicianCard from "./TechnicianCard";
 import { FilterControls } from "../FilterControls";
 
-export default async function TechnicianLists() {
-  const result: ApiResponse<TechnicianProfile[]> = await getTechnicians();
+export default async function TechnicianLists({
+  query,
+}: {
+  query?: { [key: string]: string | string[] | undefined };
+}) {
+  const result: ApiResponse<TechnicianProfile[]> = await getTechnicians({
+    query,
+  });
   return (
     <div className="mx-auto flex gap-8 max-w-7xl px-5 py-10 lg:px-8">
       <FilterControls />

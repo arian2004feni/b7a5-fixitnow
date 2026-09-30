@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Rating from "../../_components/Rating";
 import { BookingCard } from "../../_components/BookingCard";
-import { getTechnicians } from "../../_actions/publicActions";
+import { getSingleTechnician } from "../../_actions/publicActions";
 import { TechnicianProfile as Technician } from "@/types/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ApiResponse } from "@/types/api";
@@ -26,9 +26,10 @@ export default async function TechnicianProfile({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const profileTechnicians: ApiResponse<Technician[]> = await getTechnicians();
-  const tech = profileTechnicians.data.find((t) => t.id === id);
-  if (!tech) notFound();
+  const profileTechnicians: ApiResponse<Technician> =
+    await getSingleTechnician(id);
+  const tech = profileTechnicians.data;
+  if (!profileTechnicians.success) notFound();
   return (
     <>
       <section className="border-b border-slate-200 bg-white">

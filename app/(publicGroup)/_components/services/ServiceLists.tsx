@@ -6,8 +6,13 @@ import { MobileFilterButton } from "../MobileFilterButton";
 import { Service } from "@/types/services";
 import { ApiResponse } from "@/types/api";
 
-export default async function ServiceLists() {
-const result: ApiResponse<Service[]> = await getServices()
+export default async function ServiceLists({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const query = await searchParams;
+  const result: ApiResponse<Service[]> = await getServices({query});
   return (
     <div className="mx-auto flex max-w-7xl gap-8 px-5 py-10 lg:px-8">
       <FilterControls />
