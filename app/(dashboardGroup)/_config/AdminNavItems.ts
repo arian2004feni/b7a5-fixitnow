@@ -16,5 +16,5 @@ export const ADMIN_NAV_ITEMS: ISidebarItem[] = [
     icon: BookOpen,
   },
   { href: "/admin-dashboard/categories", label: "Categories", icon: Boxes },
-  { href: "/admin-dashboard/settings", label: "Settings", icon: Settings },
+  // { href: "/admin-dashboard/settings", label: "Settings", icon: Settings },
 ];

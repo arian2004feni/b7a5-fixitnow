@@ -1,11 +1,14 @@
 import { Booking } from "./booking";
-import { PaymentStatus } from "./enums";
+import { PaymentProvider, PaymentStatus } from "./enums";
 
 export interface Payment {
   id: string;
 
   bookingId: string;
   bookings?: Booking
+
+  amount: number;
+  provider: PaymentProvider;
 
   status: PaymentStatus;
   transactionId: string;

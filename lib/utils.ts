@@ -9,3 +9,22 @@ export function convert24to12(time24: string) {
 
   return `${hours12}:${minutes} ${period}`;
 }
+
+export function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function formatTime(date: string | null) {
+  if (!date) return "—";
+
+  return new Intl.RelativeTimeFormat("en", {
+    numeric: "auto",
+  }).format(
+    Math.round((new Date(date).getTime() - Date.now()) / 60000),
+    "minute",
+  );
+}

@@ -8,6 +8,10 @@ export interface Category {
 
   services?: Service[];
 
+  _count?: {
+    services: number;
+  };
+
   createdAt: string;
   updatedAt: string;
 }
