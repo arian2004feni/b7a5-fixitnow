@@ -7,14 +7,29 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import { categories, services, technicians } from "@/components/fixitnow/data";
 import Image from "next/image";
 import SearchBar from "./_components/SearchBar";
 import SectionHeading from "./_components/SectionHeading";
-import ServiceCard from "./_components/ServiceCard";
-import TechnicianCard from "./_components/TechnicianCard";
+import { getServices, getTechnicians } from "./_actions/publicActions";
+import { ApiResponse } from "@/types/api";
+import { TechnicianProfile } from "@/types/user";
+import { Suspense } from "react";
+import TechnicianCard from "./_components/technicians/TechnicianCard";
+import { Service } from "@/types/services";
+import { ServiceCards } from "./_components/services/ServiceCards";
 
-export default function PublicHomePage() {
+const categories = [
+  { name: "Plumbing", icon: "◉", tint: "bg-blue-50 text-blue-600" },
+  { name: "Electrical", icon: "ϟ", tint: "bg-amber-50 text-amber-600" },
+  { name: "Cleaning", icon: "✦", tint: "bg-emerald-50 text-emerald-600" },
+  { name: "Painting", icon: "◒", tint: "bg-violet-50 text-violet-600" },
+  { name: "Appliance Repair", icon: "▦", tint: "bg-rose-50 text-rose-600" },
+  { name: "Carpentry", icon: "⌂", tint: "bg-orange-50 text-orange-600" },
+];
+
+export default async function PublicHomePage() {
+  const services: ApiResponse<Service[]> = await getServices();
+  const technicians: ApiResponse<TechnicianProfile[]> = await getTechnicians();
   return (
     <>
       <section className="relative overflow-hidden bg-slate-950">
@@ -148,8 +163,8 @@ export default function PublicHomePage() {
           href="/services"
         />
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {services.slice(0, 3).map((service) => (
-            <ServiceCard key={service.id} service={service} />
+          {services.data.slice(0, 3).map((service) => (
+            <ServiceCards key={service.id} service={service} />
           ))}
         </div>
       </section>
@@ -161,11 +176,13 @@ export default function PublicHomePage() {
             body="Real people, real skills, and a commitment to great work."
             href="/technicians"
           />
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {technicians.map((tech) => (
-              <TechnicianCard key={tech.slug} tech={tech} />
+          <Suspense>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {technicians.data.slice(0,4).map((tech) => (
+              <TechnicianCard key={tech.id} tech={tech} />
             ))}
           </div>
+          </Suspense>
         </div>
       </section>
       <section className="mx-5 mb-20 overflow-hidden rounded-3xl bg-blue-600 px-6 py-14 text-center text-white lg:mx-auto lg:max-w-7xl lg:px-8">

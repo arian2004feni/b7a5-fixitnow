@@ -65,7 +65,7 @@ export function ServiceCards({ service }: { service: Service }) {
           </p>
         </div>
         <Link
-          href="/technicians/michael-rodriguez"
+          href={`/technicians/${service.technicianId}`}
           className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center justify-end"
         >
           <span>View Technician</span>
