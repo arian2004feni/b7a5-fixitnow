@@ -32,10 +32,16 @@ import { Service } from "@/types/services";
 import Image from "next/image";
 import StatusBadge from "../_components/customer/StatusBadge";
 
-export default async function CustomerDashboard() {
+export default async function CustomerDashboard({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const user: ApiResponse<User> = await getMe();
 
-  const services: ApiResponse<Service[]> = await getServices();
+  const services: ApiResponse<Service[]> = await getServices({
+    query: searchParams,
+  });
 
   const userBookings = user.data.customerProfile?.customerBookings;
 
