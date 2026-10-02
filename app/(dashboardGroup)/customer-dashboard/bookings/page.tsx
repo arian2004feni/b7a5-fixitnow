@@ -7,6 +7,7 @@ import { getMe } from "@/services/getMe";
 import { ApiResponse } from "@/types/api";
 import { User } from "@/types/user";
 import BookingLists from "../../_components/customer/BookingLists";
+import { BookingListsSkeleton } from "../../_components/customer/CustomerSkeletons";
 
 export default async function BookingsPage() {
   const user: ApiResponse<User> = await getMe();
@@ -26,7 +27,7 @@ export default async function BookingsPage() {
           </Button>
         }
       />
-      <Suspense fallback={<span>loading...</span>}>
+      <Suspense fallback={<BookingListsSkeleton />}>
         <BookingLists bookings={bookings} />
       </Suspense>
     </div>

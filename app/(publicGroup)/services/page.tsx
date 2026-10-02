@@ -1,3 +1,4 @@
+import { ServiceListSkeleton } from "../_components/home/HomeSkeletons";
 import ServiceLists from "../_components/services/ServiceLists";
 import ServicesSeachBar from "../_components/services/ServicesSeachBar";
 import { Suspense } from "react";
@@ -24,7 +25,7 @@ export default function PublicServicesPage({
           <ServicesSeachBar />
         </div>
       </div>
-      <Suspense fallback={<span>Loading...</span>}>
+      <Suspense fallback={<ServiceListSkeleton />}>
         <ServiceLists searchParams={searchParams}/>
       </Suspense>
     </>

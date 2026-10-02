@@ -9,17 +9,11 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import Rating from "../../_components/Rating";
-import { BookingCard } from "../../_components/BookingCard";
 import { getSingleTechnician } from "../../_actions/publicActions";
 import { TechnicianProfile as Technician } from "@/types/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ApiResponse } from "@/types/api";
-const profileServices = [
-  { id: "plumbing", title: "Emergency Plumbing", price: 85 },
-  { id: "pipes", title: "Pipe installation", price: 120 },
-  { id: "water", title: "Water heater repair", price: 95 },
-  { id: "drain", title: "Drain cleaning", price: 75 },
-];
+import { BookingCard } from "../../_components/technicians/BookingCard";
 export default async function TechnicianProfile({
   params,
 }: {
@@ -55,7 +49,7 @@ export default async function TechnicianProfile({
               </div>
               <p className="mt-2 text-lg text-slate-500">{tech.bio}</p>
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-                <Rating value={4.4} reviews={44} />
+                <Rating value={tech.averageRating ?? 0} reviews={44} />
                 <span className="flex items-center gap-1.5">
                   <MapPin className="size-4" />
                   {tech.location ?? "N/A"}
@@ -105,11 +99,16 @@ export default async function TechnicianProfile({
             </p>
             <div className="mt-7 grid gap-4 sm:grid-cols-3">
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-2xl font-bold text-slate-900">{33}</p>
+                <p className="text-2xl font-bold text-slate-900">
+                  {tech.bookings?.filter((b) => b.status === "COMPLETED")
+                    .length ?? 0}
+                </p>
                 <p className="mt-1 text-sm text-slate-500">Jobs completed</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-2xl font-bold text-slate-900">{4.4}</p>
+                <p className="text-2xl font-bold text-slate-900">
+                  {tech.averageRating ?? 0}
+                </p>
                 <p className="mt-1 text-sm text-slate-500">Average rating</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -121,13 +120,13 @@ export default async function TechnicianProfile({
           <section className="border-t border-slate-200 py-8">
             <h2 className="text-xl font-bold">Services offered</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {profileServices.map((service) => (
+              {(tech.services ?? []).map((service) => (
                 <div
                   key={service.id}
                   className="rounded-xl border border-slate-200 bg-white p-5"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{service.title}</h3>
+                    <h3 className="font-semibold">{service.name}</h3>
                     <span className="font-bold">From ${service.price}</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-500">
@@ -142,7 +141,7 @@ export default async function TechnicianProfile({
               ))}
             </div>
           </section>
-          <section className="border-t border-slate-200 py-8">
+          {/* <section className="border-t border-slate-200 py-8">
             <h2 className="text-xl font-bold">What customers say</h2>
             <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5">
               <div className="flex items-center gap-3">
@@ -164,14 +163,18 @@ export default async function TechnicianProfile({
                 Helpful review
               </div>
             </div>
-          </section>
+          </section> */}
         </div>
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="mb-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
             <span className="size-2 rounded-full bg-emerald-500" />
             Available for bookings this week
           </div>
-          <BookingCard />
+          <BookingCard
+            technicianId={tech.id}
+            services={tech.services ?? []}
+            slots={tech.availabilitySlots ?? []}
+          />
         </aside>
       </div>
     </>

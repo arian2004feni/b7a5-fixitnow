@@ -60,17 +60,17 @@ export const getPaymentDetails = async (id: string) => {
 
   const result = await res.json();
 
-  if (result.success) {
-    revalidateTag("my-payments", {
-      expire: 0,
-    });
-  }
+  // if (result.success) {
+  //   revalidateTag("my-payments", {
+  //     expire: 0,
+  //   });
+  // }
 
-  if (result.success) {
-    revalidateTag(`bookingId-${id}`, {
-      expire: 0,
-    });
-  }
+  // if (result.success) {
+  //   revalidateTag(`bookingId-${id}`, {
+  //     expire: 0,
+  //   });
+  // }
 
   return result;
 };

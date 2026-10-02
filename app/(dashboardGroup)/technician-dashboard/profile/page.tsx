@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,8 +12,26 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { updateTechnicianProfile } from "../../_actions/profileActions";
+import { toast } from "sonner";
 
 export default function TechnicianProfile() {
+  const [saving, setSaving] = useState(false);
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const f = new FormData(e.currentTarget);
+    const r = await updateTechnicianProfile({
+      bio: f.get("bio"),
+      location: f.get("location"),
+      mobileNumber: f.get("mobileNumber"),
+      experienceYears: Number(f.get("experienceYears")),
+    });
+    setSaving(false);
+    r.success
+      ? toast.success("Profile updated")
+      : toast.error(r.message || "Could not update profile");
+  };
   return (
     <div className="flex flex-col gap-7">
       <Heading
@@ -22,102 +42,54 @@ export default function TechnicianProfile() {
         <CardHeader>
           <CardTitle>Professional profile</CardTitle>
           <CardDescription>
-            Your profile helps customers choose the right expert.
+            These details are used on your public technician profile.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-5">
-          <div className="flex items-center gap-4">
-            <div className="grid size-16 place-items-center rounded-full bg-blue-100 text-xl font-bold text-blue-700">
-              MR
+        <CardContent>
+          <form onSubmit={submit} className="grid gap-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Label>Mobile number</Label>
+                <Input
+                  name="mobileNumber"
+                  className="mt-2"
+                  placeholder="+8801XXXXXXXXX"
+                />
+              </div>
+              <div>
+                <Label>Location</Label>
+                <Input name="location" className="mt-2" placeholder="Dhaka" />
+              </div>
+              <div>
+                <Label>Years of experience</Label>
+                <Input
+                  name="experienceYears"
+                  type="number"
+                  min="0"
+                  className="mt-2"
+                  placeholder="5"
+                />
+              </div>
             </div>
             <div>
-              <Button variant="outline" size="sm">
-                Upload new photo
-              </Button>
-              <p className="mt-1 text-xs text-slate-500">
-                JPG or PNG, up to 5 MB
-              </p>
+              <Label>Professional bio</Label>
+              <Textarea
+                name="bio"
+                rows={6}
+                className="mt-2"
+                placeholder="Describe your experience, skills and the work you specialize in."
+              />
             </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Full name" value="Michael Rodriguez" />
-            <Field label="Profession" value="Licensed Plumber" />
-            <Field label="Phone" value="(512) 555-0147" />
-            <Field label="Location" value="Austin, TX" />
-            <Field label="Years of experience" value="12" />
-            <Field label="Service area" value="Austin and nearby areas" />
-          </div>
-          <div>
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              defaultValue="Reliable licensed plumber helping Austin homeowners solve urgent repairs and improve their homes."
-              className="mt-2"
-            />
-          </div>
-          <div>
-            <Label>Skills</Label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {/* {skills.map((item) => (
-                <Badge key={item} variant="secondary" className="gap-1">
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => setSkills(skills.filter((s) => s !== item))}
-                    aria-label={`Remove ${item}`}
-                  >
-                    <X className="size-3" />
-                  </button>
-                </Badge>
-              ))} */}
-              {/* <Input
-                value={skill}
-                onChange={(e) => setSkill(e.target.value)}
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    !e.nativeEvent.isComposing &&
-                    e.keyCode !== 229 &&
-                    skill.trim()
-                  ) {
-                    e.preventDefault();
-                    setSkills([...skills, skill.trim()]);
-                    setSkill("");
-                  }
-                }}
-                placeholder="Add a skill and press Enter"
-                className="max-w-xs"
-              /> */}
-            </div>
-          </div>
-          <div className="max-w-xs">
-            <Field label="Starting price" value="$85" />
-          </div>
-          {/* {saved && (
-            <Alert>
-              <CheckCircle2 className="size-4" />
-              <AlertDescription>
-                Profile changes saved successfully.
-              </AlertDescription>
-            </Alert> 
-          )} */}
-          <Button
-            className="w-fit bg-blue-600 hover:bg-blue-700"
-            // onClick={() => setSaved(true)}
-          >
-            Save changes
-          </Button>
+            <Button
+              disabled={saving}
+              type="submit"
+              className="w-fit bg-blue-600 hover:bg-blue-700"
+            >
+              {saving ? "Saving…" : "Save changes"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <Label>{label}</Label>
-      <Input defaultValue={value} className="mt-2" />
     </div>
   );
 }

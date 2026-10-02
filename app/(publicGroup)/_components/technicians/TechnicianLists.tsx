@@ -5,6 +5,8 @@ import { MobileFilterButton } from "../MobileFilterButton";
 import { ChevronDown } from "lucide-react";
 import TechnicianCard from "./TechnicianCard";
 import { FilterControls } from "../FilterControls";
+import { Category } from "@/types/category";
+import { getCategories } from "@/app/(dashboardGroup)/_actions/technicianActions";
 
 export default async function TechnicianLists({
   query,
@@ -14,9 +16,10 @@ export default async function TechnicianLists({
   const result: ApiResponse<TechnicianProfile[]> = await getTechnicians({
     query,
   });
+  const categories: ApiResponse<Category[]> = await getCategories();
   return (
     <div className="mx-auto flex gap-8 max-w-7xl px-5 py-10 lg:px-8">
-      <FilterControls />
+      <FilterControls categories={categories} />
       <div className="min-w-0 flex-1">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-slate-500">

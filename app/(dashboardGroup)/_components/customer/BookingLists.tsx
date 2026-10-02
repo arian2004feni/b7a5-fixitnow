@@ -116,10 +116,7 @@ export default function BookingLists({
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan={6}
-                      className="p-4 text-center"
-                    >
+                    <td colSpan={6} className="p-4 text-center">
                       No Booking Available
                     </td>
                   </tr>

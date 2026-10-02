@@ -1,4 +1,7 @@
-import Link from "next/link";
+import { ApiResponse } from "@/types/api";
+import { Category } from "@/types/category";
+import { Service } from "@/types/services";
+import { TechnicianProfile } from "@/types/user";
 import {
   ArrowRight,
   CheckCircle2,
@@ -8,24 +11,20 @@ import {
   Zap,
 } from "lucide-react";
 import Image from "next/image";
-import SearchBar from "./_components/SearchBar";
-import SectionHeading from "./_components/SectionHeading";
-import { getServices, getTechnicians } from "./_actions/publicActions";
-import { ApiResponse } from "@/types/api";
-import { TechnicianProfile } from "@/types/user";
+import Link from "next/link";
 import { Suspense } from "react";
-import TechnicianCard from "./_components/technicians/TechnicianCard";
-import { Service } from "@/types/services";
-import { ServiceCards } from "./_components/services/ServiceCards";
-
-const categories = [
-  { name: "Plumbing", icon: "◉", tint: "bg-blue-50 text-blue-600" },
-  { name: "Electrical", icon: "ϟ", tint: "bg-amber-50 text-amber-600" },
-  { name: "Cleaning", icon: "✦", tint: "bg-emerald-50 text-emerald-600" },
-  { name: "Painting", icon: "◒", tint: "bg-violet-50 text-violet-600" },
-  { name: "Appliance Repair", icon: "▦", tint: "bg-rose-50 text-rose-600" },
-  { name: "Carpentry", icon: "⌂", tint: "bg-orange-50 text-orange-600" },
-];
+import { getCategories } from "../../(dashboardGroup)/_actions/technicianActions";
+import { getServices, getTechnicians } from "../_actions/publicActions";
+import HomeCategories from "../_components/home/Categories";
+import {
+  HomeCategoriesSkeleton,
+  ServiceCardsSkeleton,
+  TechnicianCardSkeleton,
+} from "../_components/home/HomeSkeletons";
+import SearchBar from "../_components/SearchBar";
+import SectionHeading from "../_components/SectionHeading";
+import { ServiceCards } from "../_components/services/ServiceCards";
+import TechnicianCard from "../_components/technicians/TechnicianCard";
 
 export default async function PublicHomePage({
   searchParams,
@@ -36,6 +35,7 @@ export default async function PublicHomePage({
   const services: ApiResponse<Service[]> = await getServices(query);
   const technicians: ApiResponse<TechnicianProfile[]> =
     await getTechnicians(query);
+  const categories: ApiResponse<Category[]> = await getCategories();
   return (
     <>
       <section className="relative overflow-hidden bg-slate-950">
@@ -101,24 +101,9 @@ export default async function PublicHomePage({
           body="Whatever your home needs, there's a skilled professional ready to help."
           href="/services"
         />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {categories.map((category) => (
-            <Link
-              href="/services"
-              key={category.name}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 text-center transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
-            >
-              <div
-                className={`mx-auto grid size-14 place-items-center rounded-2xl text-2xl font-bold ${category.tint}`}
-              >
-                {category.icon}
-              </div>
-              <p className="mt-3 text-sm font-semibold text-slate-700 group-hover:text-blue-600">
-                {category.name}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <Suspense fallback={<HomeCategoriesSkeleton />}>
+          <HomeCategories categories={categories} />
+        </Suspense>
       </section>
       <section id="how-it-works" className="bg-slate-50">
         <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
@@ -168,11 +153,13 @@ export default async function PublicHomePage({
           body="Book a trusted pro for your next home project."
           href="/services"
         />
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {services.data.slice(0, 3).map((service) => (
-            <ServiceCards key={service.id} service={service} />
-          ))}
-        </div>
+        <Suspense fallback={<ServiceCardsSkeleton />}>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {services.data.slice(0, 3).map((service) => (
+              <ServiceCards key={service.id} service={service} />
+            ))}
+          </div>
+        </Suspense>
       </section>
       <section className="bg-blue-50">
         <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
@@ -182,7 +169,7 @@ export default async function PublicHomePage({
             body="Real people, real skills, and a commitment to great work."
             href="/technicians"
           />
-          <Suspense>
+          <Suspense fallback={<TechnicianCardSkeleton />}>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {technicians.data.slice(0, 4).map((tech) => (
                 <TechnicianCard key={tech.id} tech={tech} />

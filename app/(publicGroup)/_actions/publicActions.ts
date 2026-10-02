@@ -1,5 +1,8 @@
 "use server";
 
+import { isAccessTokenExist } from "@/services/refreshToken";
+import { revalidateTag } from "next/cache";
+
 export const getServices = async ({
   query,
 }: {
@@ -12,6 +15,38 @@ export const getServices = async ({
 
   if (query && query.searchTerm) {
     params.set("searchTerm", query.searchTerm as string);
+  }
+
+  if (query && query.page) {
+    params.set("page", query.page as string);
+  }
+
+  if (query && query.limit) {
+    params.set("limit", query.limit as string);
+  }
+
+  if (query && query.location) {
+    params.set("location", query.location as string);
+  }
+
+  if (query && query.minPrice) {
+    params.set("minPrice", query.minPrice as string);
+  }
+
+  if (query && query.maxPrice) {
+    params.set("maxPrice", query.maxPrice as string);
+  }
+
+  if (query && query.sortBy) {
+    params.set("sortBy", query.sortBy as string);
+  }
+
+  if (query && query.sortOrder) {
+    params.set("sortOrder", query.sortOrder as string);
+  }
+
+  if (query && query.category) {
+    params.set("category", query.category as string);
   }
 
   const res = await fetch(
@@ -73,3 +108,31 @@ export const getSingleTechnician = async (id: string) => {
 
   return result;
 };
+
+export async function createBookingAction(payload: {
+  technicianId: string;
+  serviceId: string;
+  timeSlotId: string;
+  note?: string;
+}) {
+  const token = await isAccessTokenExist();
+  const res = await fetch(`${process.env.BACKEND_APP_URL}/api/bookings`, {
+    method: "POST",
+    headers: {
+      Cookie: `accessToken=${token}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  const result = await res.json();
+
+  if (result.success) {
+    revalidateTag("my-profile", {
+      expire: 0,
+    });
+  }
+  
+  return result;
+}

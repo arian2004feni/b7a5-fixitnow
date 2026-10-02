@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import TechnicianSeachBar from "../_components/technicians/TechnicianSearchBar";
 import TechnicianLists from "../_components/technicians/TechnicianLists";
+import { ServiceListSkeleton } from "../_components/home/HomeSkeletons";
 
 export default function TechniciansPage() {
   return (
@@ -20,7 +21,7 @@ export default function TechniciansPage() {
           <TechnicianSeachBar />
         </div>
       </div>
-      <Suspense fallback={<span>Loading...</span>}>
+      <Suspense fallback={<ServiceListSkeleton />}>
         <TechnicianLists />
       </Suspense>
     </>

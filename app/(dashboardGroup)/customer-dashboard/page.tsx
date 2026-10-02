@@ -38,9 +38,10 @@ export default async function CustomerDashboard({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const user: ApiResponse<User> = await getMe();
+  const query = await searchParams;
 
   const services: ApiResponse<Service[]> = await getServices({
-    query: searchParams,
+    query,
   });
 
   const userBookings = user.data.customerProfile?.customerBookings;
@@ -173,9 +174,11 @@ export default async function CustomerDashboard({
                     <span className="font-bold text-slate-950">
                       ${userBookings?.[0].service?.price}
                     </span>
-                    <Button variant="outline" size="sm">
-                      Manage booking
-                    </Button>
+                    <Link href={`./customer-dashboard/bookings`}>
+                      <Button variant="outline" size="sm">
+                        Manage booking
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

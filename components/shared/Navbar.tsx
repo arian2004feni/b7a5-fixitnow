@@ -21,10 +21,10 @@ export default function Navbar({ user }: { user: ApiResponse<UserResponse> }) {
       name: "Browse Technicians",
       url: "/technicians",
     },
-    {
-      name: "How It Works",
-      url: "/#how-it-works",
-    },
+    // {
+    //   name: "How It Works",
+    //   url: "/#how-it-works",
+    // },
   ];
 
   return (
