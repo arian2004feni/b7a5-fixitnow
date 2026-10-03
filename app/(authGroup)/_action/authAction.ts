@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Role } from "@/types/enums";
+import { toast } from "sonner";
 
 export const loginAction = async (
   redirectTo: string,
@@ -21,7 +22,6 @@ export const loginAction = async (
   });
 
   const result = await res.json();
-  console.log("result", result);
 
   if (result.success) {
     const cookieStore = await cookies();
@@ -56,3 +56,21 @@ export const loginAction = async (
 
   return result;
 };
+
+export async function registerAction(_: unknown, formData: FormData) {
+  const payload = {
+    name: String(formData.get("name") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    password: String(formData.get("password") || ""),
+    role: String(formData.get("role") || "CUSTOMER").toUpperCase(),
+  };
+  const res = await fetch(`${process.env.BACKEND_APP_URL}/api/auth/register`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+  const result = await res.json();
+
+  return result;
+}

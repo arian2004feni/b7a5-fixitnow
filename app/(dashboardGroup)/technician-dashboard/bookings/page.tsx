@@ -4,6 +4,7 @@ import TechnicianBookingLists from "../../_components/technician/BookingLists";
 import { ApiResponse } from "@/types/api";
 import { getMe } from "@/services/getMe";
 import { User } from "@/types/user";
+import { TechnicianBookingsLoading } from "../../_components/technician/TechnicianSkeletons";
 
 export default async function TechnicianBookings() {
   const user: ApiResponse<User> = await getMe();
@@ -14,7 +15,7 @@ export default async function TechnicianBookings() {
         title="Bookings"
         description="Manage requests and keep customers updated."
       />
-      <Suspense>
+      <Suspense fallback={<TechnicianBookingsLoading />}>
         {bookings && <TechnicianBookingLists bookings={bookings} />}
       </Suspense>
     </div>

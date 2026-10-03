@@ -3,7 +3,6 @@
 import { isAccessTokenExist } from "@/services/refreshToken";
 import { ApiResponse } from "@/types/api";
 import { CreatePaymentResponse } from "@/types/payment";
-import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export const getCustomerPayments = async () => {
@@ -13,11 +12,7 @@ export const getCustomerPayments = async () => {
     headers: {
       Cookie: `accessToken=${accessToken}`,
     },
-    cache: "force-cache",
-    next: {
-      revalidate: 60 * 60 * 24,
-      tags: ["my-payments"],
-    },
+    cache: "no-store",
   });
 
   const result = await res.json();
@@ -32,11 +27,7 @@ export const getSingleBookings = async (id: string) => {
     headers: {
       Cookie: `accessToken=${accessToken}`,
     },
-    cache: "force-cache",
-    next: {
-      revalidate: 60 * 60 * 24,
-      tags: [`bookingId-${id}`],
-    },
+    cache: "no-store",
   });
 
   const result = await res.json();
@@ -51,26 +42,10 @@ export const getPaymentDetails = async (id: string) => {
     headers: {
       Cookie: `accessToken=${accessToken}`,
     },
-    cache: "force-cache",
-    next: {
-      revalidate: 60 * 60 * 24,
-      tags: [`paymentBookingId-${id}`],
-    },
+    cache: "no-store",
   });
 
   const result = await res.json();
-
-  // if (result.success) {
-  //   revalidateTag("my-payments", {
-  //     expire: 0,
-  //   });
-  // }
-
-  // if (result.success) {
-  //   revalidateTag(`bookingId-${id}`, {
-  //     expire: 0,
-  //   });
-  // }
 
   return result;
 };

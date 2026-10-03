@@ -212,7 +212,7 @@ export default function TechnicianServiceLists({
                                   items.filter((_, index) => index !== i),
                                 );
                                 toast.success(result.message);
-                              }
+                              } else toast.error(result.message);
                             }}
                           >
                             <Trash2 className="size-4 text-red-500" />
@@ -228,7 +228,7 @@ export default function TechnicianServiceLists({
         </Card>
       ) : (
         <Card>
-          <EmptyServices onAction={createServiceAction}/>
+          <EmptyServices onAction={createServiceAction} />
         </Card>
       )}
       <Dialog open={open} onOpenChange={setOpen}>

@@ -16,7 +16,6 @@ export default async function TechnicianCard({
 }: {
   tech: TechnicianProfile;
 }) {
-  console.log(tech.user?.name);
   return (
     <Card className="relative mx-auto w-full max-w-sm">
       <CardHeader>

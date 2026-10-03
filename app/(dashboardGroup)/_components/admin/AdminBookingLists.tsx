@@ -29,6 +29,7 @@ import {
 import { Booking } from "@/types/booking";
 import { getAdminBookings } from "../../_actions/adminActions";
 import { BookingStatus } from "@/types/enums";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statuses = [
   "ALL",
@@ -95,7 +96,61 @@ export default function AdminBookingLists() {
   if (loading) {
     return (
       <Card>
-        <CardContent className="p-6">Loading bookings...</CardContent>
+        <CardHeader className="space-y-2">
+          {/* Card Title and Total Counts */}
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-28" />
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="border-y bg-slate-50">
+                <tr>
+                  {[
+                    "Icon",
+                    "Category Name",
+                    "Total Services",
+                    "Created At",
+                    "Actions",
+                  ].map((h) => (
+                    <th key={h} className="px-5 py-3">
+                      <Skeleton className="h-3 w-16" />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 4 }).map((_, rowIndex) => (
+                  <tr key={rowIndex} className="border-b last:border-0">
+                    {/* Icon Column */}
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-8 w-8 rounded-lg" />
+                    </td>
+                    {/* Category Name */}
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-4 w-44" />
+                    </td>
+                    {/* Total Services Count */}
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-4 w-12" />
+                    </td>
+                    {/* Created Date */}
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-4 w-28" />
+                    </td>
+                    {/* Action Buttons */}
+                    <td className="px-5 py-4">
+                      <div className="flex gap-2">
+                        <Skeleton className="h-8 w-8 rounded-md" />
+                        <Skeleton className="h-8 w-8 rounded-md" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
       </Card>
     );
   }
@@ -354,7 +409,9 @@ export default function AdminBookingLists() {
         <p className="text-xs text-slate-500">{label}</p>
 
         <p className="mt-1 font-medium break-all">
-          <span className="break-all">{value == null || value === "" ? "Not provided" : String(value)}</span>
+          <span className="break-all">
+            {value == null || value === "" ? "Not provided" : String(value)}
+          </span>
         </p>
       </div>
     );

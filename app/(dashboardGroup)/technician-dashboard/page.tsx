@@ -42,8 +42,6 @@ export default async function TechnicianDashboard() {
       (b) => b.status === BookingStatus.REQUESTED,
     );
 
-  console.log(pendingRequests);
-
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();

@@ -39,9 +39,9 @@ export function Actions({
           Complete job
         </Button>
       )}
-      <Button size="sm" variant="outline">
+      {/* <Button size="sm" variant="outline">
         View
-      </Button>
+      </Button> */}
     </div>
   );
 }

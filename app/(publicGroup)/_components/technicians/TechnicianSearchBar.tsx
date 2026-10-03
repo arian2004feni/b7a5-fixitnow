@@ -34,7 +34,6 @@ export default function TechnicianSeachBar() {
     }
 
     debouncedReference.current = setTimeout(() => {
-      console.log(value);
 
       const params = new URLSearchParams();
 

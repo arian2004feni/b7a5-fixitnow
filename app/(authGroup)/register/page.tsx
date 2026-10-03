@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, Loader2, UserRound, Wrench } from "lucide-react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,81 +19,102 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { registerAction } from "../_action/authAction";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { User } from "@/types/user";
+import { ApiResponse } from "@/types/api";
 
 export default function RegisterPage() {
   const [show, setShow] = useState(false);
-  const [role, setRole] = useState("customer");
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
+  const [state, action, pending] = useActionState(
+    async (prevState: ApiResponse<User>, formData: FormData) => {
+      const result = await registerAction(prevState, formData);
+
+      if (result.success && result.data) {
+        toast.success(result.message);
+        router.push("/login");
+      } else {
+        toast.error(result.message);
+      }
+      return result;
+    },
+    false,
+  );
+
   return (
     <Card className="border-slate-200 shadow-xl shadow-slate-900/5">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Create your account</CardTitle>
+        <CardTitle className="text-2xl">Create your FixItNow account</CardTitle>
         <CardDescription>
-          Get trusted help for your home in just a few steps.
+          Choose your role and start using trusted home services.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSubmitted(true);
-          }}
-        >
+        <form action={action}>
           <FieldGroup>
+            {state?.success === false && (
+              <div
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+              >
+                {state.message ||
+                  "Registration failed. Please check your information."}
+              </div>
+            )}
             <Field>
               <FieldLabel>I&apos;m joining as</FieldLabel>
               <RadioGroup
-                value={role}
-                onValueChange={setRole}
+                name="role"
+                defaultValue="CUSTOMER"
                 className="grid grid-cols-2 gap-3"
               >
-                <label
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm ${role === "customer" ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200"}`}
-                >
-                  <RadioGroupItem value="customer" />
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm">
+                  <RadioGroupItem value="CUSTOMER" />{" "}
+                  <UserRound className="size-4" />
                   Customer
                 </label>
-                <label
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm ${role === "technician" ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200"}`}
-                >
-                  <RadioGroupItem value="technician" />
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm">
+                  <RadioGroupItem value="TECHNICIAN" />{" "}
+                  <Wrench className="size-4" />
                   Technician
                 </label>
               </RadioGroup>
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field>
-                <FieldLabel htmlFor="first">First name</FieldLabel>
-                <Input id="first" required placeholder="Jordan" />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="last">Last name</FieldLabel>
-                <Input id="last" required placeholder="Davis" />
-              </Field>
-            </div>
             <Field>
-              <FieldLabel htmlFor="register-email">Email address</FieldLabel>
+              <FieldLabel htmlFor="name">Full name</FieldLabel>
               <Input
-                id="register-email"
+                id="name"
+                name="name"
+                required
+                placeholder="Your full name"
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="email">Email address</FieldLabel>
+              <Input
+                id="email"
+                name="email"
                 type="email"
                 required
                 placeholder="you@example.com"
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="register-password">Password</FieldLabel>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
               <div className="relative">
                 <Input
-                  id="register-password"
+                  id="password"
+                  name="password"
                   type={show ? "text" : "password"}
-                  required
                   minLength={8}
+                  required
                   placeholder="At least 8 characters"
                   className="pr-10"
                 />
                 <button
                   type="button"
-                  aria-label={show ? "Hide password" : "Show password"}
                   onClick={() => setShow(!show)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
                 >
@@ -104,12 +125,14 @@ export default function RegisterPage() {
                   )}
                 </button>
               </div>
+              <FieldDescription>Use at least 8 characters.</FieldDescription>
             </Field>
             <Button
-              type="submit"
+              disabled={pending}
               className="w-full bg-blue-600 hover:bg-blue-700"
             >
-              {submitted ? "Account created" : "Create account"}
+              {pending && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {pending ? "Creating account" : "Create account"}
             </Button>
             <FieldDescription className="text-center">
               Already have an account?{" "}

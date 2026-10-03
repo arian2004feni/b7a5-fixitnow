@@ -6,8 +6,9 @@ import { getPaymentDetails } from "../../_actions/customerActions";
 import { ApiResponse } from "@/types/api";
 import { Payment } from "@/types/payment";
 import { Badge } from "@/components/ui/badge";
+import { revalidateTag } from "next/cache";
 
-export default async function PaymentResult({
+export default async function PaymentResultPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

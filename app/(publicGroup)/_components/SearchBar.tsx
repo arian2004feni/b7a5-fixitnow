@@ -1,9 +1,26 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function SearchBar({ compact = false }: { compact?: boolean }) {
+  const router = useRouter();
+  const current = useSearchParams();
+  const [service, setService] = useState(current.get("searchTerm") ?? "");
+  const [location, setLocation] = useState(current.get("location") ?? "");
+  const submit = () => {
+    const p = new URLSearchParams();
+    if (service.trim()) p.set("searchTerm", service.trim());
+    if (location.trim()) p.set("location", location.trim());
+    router.push(`/services?${p.toString()}`);
+  };
   return (
-    <div
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit();
+      }}
       className={`flex flex-col gap-2 rounded-2xl bg-white p-2 shadow-xl shadow-slate-900/10 sm:flex-row ${compact ? "border border-slate-200 shadow-none" : ""}`}
     >
       <div className="flex flex-1 items-center gap-3 rounded-xl px-3 py-2">
@@ -13,7 +30,9 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
             What service do you need?
           </label>
           <input
-            className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+            value={service}
+            onChange={(e) => setService(e.target.value)}
+            className="w-full bg-transparent text-sm text-slate-800 outline-none"
             placeholder="e.g. Plumbing, cleaning..."
           />
         </div>
@@ -25,15 +44,20 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
             Location
           </label>
           <input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
             className="w-full bg-transparent text-sm text-slate-800 outline-none"
-            placeholder="Austin, TX"
+            placeholder="Dhaka, Bangladesh"
           />
         </div>
       </div>
-      <Button className="h-12 rounded-xl bg-blue-600 px-6 hover:bg-blue-700">
+      <Button
+        type="submit"
+        className="h-12 rounded-xl bg-blue-600 px-6 hover:bg-blue-700"
+      >
         <Search className="mr-2 size-4" />
         Search
       </Button>
-    </div>
+    </form>
   );
 }

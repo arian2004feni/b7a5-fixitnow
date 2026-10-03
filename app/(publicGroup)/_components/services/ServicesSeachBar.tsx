@@ -34,7 +34,6 @@ export default function ServicesSeachBar() {
     }
 
     debouncedReference.current = setTimeout(() => {
-      console.log(value);
 
       const params = new URLSearchParams();
 
