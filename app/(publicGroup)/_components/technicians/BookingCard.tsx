@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Service } from "@/types/services";
 import type { AvailabilitySlot } from "@/types/availability";
 import { createBookingAction } from "../../_actions/publicActions";
+import { toast } from "sonner";
 
 export function BookingCard({
   technicianId,
@@ -34,6 +35,7 @@ export function BookingCard({
         note,
       });
       if (r.success) router.push("/customer-dashboard/bookings");
+      else toast.error(r.message);
     });
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5">

@@ -18,6 +18,7 @@ import {
 import type { Service } from "@/types/services";
 import type { AvailabilitySlot } from "@/types/availability";
 import { createBookingAction } from "@/app/(publicGroup)/_actions/publicActions";
+import { toast } from "sonner";
 
 export function BookingModal({
   technicianId,
@@ -51,7 +52,7 @@ export function BookingModal({
       if (r.success) {
         setOpen(false); // Close modal on success
         router.push("/customer-dashboard/bookings");
-      }
+      } else toast.error(r.message)
     });
 
   return (

@@ -49,7 +49,10 @@ export default async function TechnicianProfile({
               </div>
               <p className="mt-2 text-lg text-slate-500">{tech.bio}</p>
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-                <Rating value={tech.averageRating ?? 0} reviews={44} />
+                <Rating
+                  value={tech.averageRating ?? 0}
+                  reviews={tech.reviewsReceived?.length}
+                />
                 <span className="flex items-center gap-1.5">
                   <MapPin className="size-4" />
                   {tech.location ?? "N/A"}
@@ -112,8 +115,10 @@ export default async function TechnicianProfile({
                 <p className="mt-1 text-sm text-slate-500">Average rating</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-2xl font-bold text-slate-900">98%</p>
-                <p className="mt-1 text-sm text-slate-500">Would recommend</p>
+                <p className="text-2xl font-bold text-slate-900">
+                  {tech.bookings?.length}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">Total Bookings</p>
               </div>
             </div>
           </section>
@@ -135,35 +140,39 @@ export default async function TechnicianProfile({
                   </p>
                   <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
                     <Clock3 className="size-3.5" />
-                    Usually 1–2 hours
+                    Usually {service.duration ?? 1} hours
                   </div>
                 </div>
               ))}
             </div>
           </section>
-          {/* <section className="border-t border-slate-200 py-8">
+          <section className="border-t border-slate-200 py-8">
             <h2 className="text-xl font-bold">What customers say</h2>
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5">
-              <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-full bg-blue-100 font-semibold text-blue-700">
-                  JM
+            {tech.reviewsReceived?.length &&
+              tech.reviewsReceived.map((t) => (
+                <div
+                  key={t.id}
+                  className="mt-5 rounded-2xl border border-slate-200 bg-white p-5"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* <div className="grid size-10 place-items-center rounded-full bg-blue-100 font-semibold text-blue-700">
+                    JM
+                  </div> */}
+                    <div>
+                      <p className="font-semibold">Jordan Miller</p>
+                      <Rating value={t.rating as number} />
+                    </div>
+                  </div>
+                  <p className="mt-4 leading-6 text-slate-600">
+                    {t.comment}
+                  </p>
+                  <div className="mt-4 flex items-center gap-1 text-xs text-slate-400">
+                    <ThumbsUp className="size-3.5" />
+                    Helpful review
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold">Jordan Miller</p>
-                  <Rating value={5} />
-                </div>
-              </div>
-              <p className="mt-4 leading-6 text-slate-600">
-                “Michael was on time, professional, and explained everything
-                clearly. The repair was done quickly and the price was exactly
-                what we discussed.”
-              </p>
-              <div className="mt-4 flex items-center gap-1 text-xs text-slate-400">
-                <ThumbsUp className="size-3.5" />
-                Helpful review
-              </div>
-            </div>
-          </section> */}
+              ))}
+          </section>
         </div>
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="mb-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">

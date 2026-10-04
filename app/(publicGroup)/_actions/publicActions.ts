@@ -116,6 +116,14 @@ export async function createBookingAction(payload: {
   note?: string;
 }) {
   const token = await isAccessTokenExist();
+
+  if (typeof token !== "string" && !token?.success) {
+    return {
+      success: false,
+      message: "User not logged in!",
+    };
+  }
+
   const res = await fetch(`${process.env.BACKEND_APP_URL}/api/bookings`, {
     method: "POST",
     headers: {

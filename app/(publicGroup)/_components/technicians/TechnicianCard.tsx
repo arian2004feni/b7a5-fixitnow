@@ -41,7 +41,7 @@ export default async function TechnicianCard({
           <MapPin className="size-4 text-slate-400" />
           {tech.location ?? "location"}
         </div>
-        <Rating value={4.4} reviews={10} />
+        {/* <Rating value={4.4} reviews={10} /> */}
       </CardHeader>
 
       <div className="flex items-center justify-between border-t border-slate-100 p-4 text-xs text-slate-500">
@@ -50,10 +50,16 @@ export default async function TechnicianCard({
           experience
         </span>
         <span>
-          <strong className="text-slate-800">{33}</strong> jobs done
+          <strong className="text-slate-800">
+            {tech.services?.length ?? "No"}
+          </strong>{" "}
+          Services
         </span>
         <span>
-          <strong className="text-slate-800">{98}</strong>% Imp.
+          <strong className="text-slate-800">
+            {tech.reviewsReceived?.length}
+          </strong>{" "}
+          Reviews
         </span>
       </div>
       <div className="px-4">
