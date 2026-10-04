@@ -7,6 +7,7 @@ import TechnicianCard from "./TechnicianCard";
 import { FilterControls } from "../FilterControls";
 import { Category } from "@/types/category";
 import { getCategories } from "@/app/(dashboardGroup)/_actions/technicianActions";
+import { PaginationControls } from "../PaginationControls";
 
 export default async function TechnicianLists({
   query,
@@ -35,11 +36,22 @@ export default async function TechnicianLists({
             </button>
           </div>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {result.data.map((tech) => (
-            <TechnicianCard key={tech.id} tech={tech} />
-          ))}
-        </div>
+        {result.data.length ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {result.data.map((tech) => (
+              <TechnicianCard key={tech.id} tech={tech} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
+            <h2 className="font-bold">No Technicians found</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Try a different search.
+            </p>
+          </div>
+        )}
+        <div className="mt-10"></div>
+        {result.meta && <PaginationControls meta={result.meta} />}
       </div>
     </div>
   );

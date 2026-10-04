@@ -1,13 +1,10 @@
 "use client";
 
-import { ApiResponse, PaginationMeta } from "@/types/api";
-import { Category } from "@/types/category";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { PaginationMeta } from "@/types/api";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -15,18 +12,11 @@ import {
 } from "@/components/ui/pagination";
 
 export function PaginationControls({ meta }: { meta: PaginationMeta }) {
-  const router = useRouter(),
-    pathname = usePathname(),
+  const pathname = usePathname(),
     search = useSearchParams();
   const p = new URLSearchParams(search.toString());
-  const current = p.get("page");
-  // const [pending, startTransition] = useTransition();
-  // const set = (key: string, value: string, checked: boolean) => {
-  //   if (checked) p.set(key, value);
-  //   else p.delete(key);
-  //   startTransition(() => router.replace(`${pathname}?${p.toString()}`));
-  // };
-  // const clear = () => startTransition(() => router.replace(pathname));
+  let current = p.get("page");
+  if (current === null) current = "1";
   return (
     <Pagination>
       <PaginationContent>

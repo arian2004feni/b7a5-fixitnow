@@ -76,6 +76,54 @@ export const getTechnicians = async ({
     params.set("searchTerm", query.searchTerm as string);
   }
 
+  if (query && query.page) {
+    params.set("page", query.page as string);
+  }
+
+  if (query && query.limit) {
+    params.set("limit", query.limit as string);
+  }
+
+  if (query && query.name) {
+    params.set("name", query.name as string);
+  }
+
+  if (query && query.experienceYears) {
+    params.set("experienceYears", query.experienceYears as string);
+  }
+
+  if (query && query.status) {
+    params.set("status", query.status as string);
+  }
+
+  if (query && query.location) {
+    params.set("location", query.location as string);
+  }
+
+  if (query && query.mobileNumber) {
+    params.set("mobileNumber", query.mobileNumber as string);
+  }
+
+  if (query && query.minRating) {
+    params.set("minRating", query.minRating as string);
+  }
+
+  if (query && query.availabilityDay) {
+    params.set("availabilityDay", query.availabilityDay as string);
+  }
+
+  if (query && query.sortBy) {
+    params.set("sortBy", query.sortBy as string);
+  }
+
+  if (query && query.sortOrder) {
+    params.set("sortOrder", query.sortOrder as string);
+  }
+
+  if (query && query.category) {
+    params.set("category", query.category as string);
+  }
+
   const res = await fetch(
     `${process.env.BACKEND_APP_URL}/api/technician?${params.toString()}`,
     {
